@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Leaderboard</title>
+  <style>
+    body { font-family: sans-serif; padding: 20px; text-align: center; }
+    table { margin: auto; border-collapse: collapse; width: 60%; }
+    th, td { border: 1px solid #ccc; padding: 10px; }
+    th { background: #eee; }
+  </style>
+</head>
+<body>
+  <h1>Top Voted Images</h1>
+  <table>
+    <tr><th>Image</th><th>Votes</th></tr>
+    {% for name, votes in leaderboard %}
+      <tr>
+        <td><img src="{{ url_for('static', filename='images/' + name) }}" width="150"></td>
+        <td>{{ votes }}</td>
+      </tr>
+    {% endfor %}
+  </table>
+  <p><a href="/">Back to Voting</a></p>
+</body>
+</html>

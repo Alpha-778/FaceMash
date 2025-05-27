@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Choose Left or Right</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    body { font-family: sans-serif; text-align: center; padding: 20px; background: #f7f7f7; }
+    .container { display: flex; justify-content: center; flex-wrap: wrap; gap: 20px; }
+    .image-option { width: 300px; border-radius: 10px; cursor: pointer; border: 4px solid transparent; }
+    .image-option:hover { border-color: #aaa; }
+    #result, #stats { margin-top: 20px; font-size: 18px; }
+    button { margin-top: 20px; padding: 10px 20px; font-size: 16px; border-radius: 8px; cursor: pointer; }
+  </style>
+</head>
+<body>
+  <h1>Which one do you prefer?</h1>
+  <div class="container">
+    <img src="{{ img_left }}" id="left" class="image-option">
+    <img src="{{ img_right }}" id="right" class="image-option">
+  </div>
+  <p id="result"></p>
+  <p id="stats"></p>
+  <!-- <button onclick="window.location='/next'">Next Pair</button> -->
+  <p><a href="/leaderboard">View Leaderboard</a></p>
+
+  <script>
+  function sendVote(choice) {
+    fetch('/vote', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ choice })
+    })
+    .then(res => res.json())
+    .then(data => {
+      document.getElementById('result').textContent = data.message;
+      document.getElementById('stats').textContent =
+        `Left: ${data.left_percent}% | Right: ${data.right_percent}%`;
+
+      // Automatically load new pair
+      fetch('/new_pair')
+        .then(res => res.json())
+        .then(newImgs => {
+          document.getElementById('left').src = newImgs.img_left;
+          document.getElementById('right').src = newImgs.img_right;
+          document.getElementById('result').textContent = '';
+          document.getElementById('stats').textContent = '';
+        });
+    });
+  }
+
+  document.getElementById('left').addEventListener('click', () => sendVote('left'));
+  document.getElementById('right').addEventListener('click', () => sendVote('right'));
+</script>
+</body>
+</html>
